@@ -5,20 +5,30 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import com.beust.jcommander.JCommander;
+import com.beust.jcommander.ParameterException;
 
 /**
  * @author thomas.drescher
- * application to determine number of gallons required to paint a room based on information 
- * provided in command line arguments
+ * application to determine number of gallons required to paint an interior room 
+ * based on room specifications provided via command line arguments
  *
  */
 public class PaintCalculator {
 	public static final String PIPE = "\\|";
+	public static final String CLASS_NAME = PaintCalculator.class.getSimpleName();
 	
 	public static void main(String[] args) {
 		//parse args using custom args class and jcommander library
 		CommandLineArgs cla = new CommandLineArgs();
-		new JCommander(cla, args);
+		JCommander cmd = new JCommander(cla);
+		cmd.setProgramName(CLASS_NAME);
+		try {
+	        cmd.parse(args);
+	    } catch (ParameterException ex) {
+	        System.out.println(ex.getMessage());
+	        cmd.usage();
+	        System.exit(1);
+	    }
 
 		//define arraylists to hold paintable/non paintable objects used later for calculations
 		ArrayList<Surface> paintableSurfaces = new ArrayList<Surface>();
@@ -60,7 +70,7 @@ public class PaintCalculator {
 		int paintableSurface = pc.calculateArea(paintableSurfaces);
 		int nonPaintableSurface = pc.calculateArea(nonPaintableSurfaces);
 		int totalPaintableSurfaceArea = paintableSurface - nonPaintableSurface;
-		System.out.println("Total paintable surface area: " + totalPaintableSurfaceArea);
+		System.out.println("Total paintable surface area: " + totalPaintableSurfaceArea + " sq/ft");
 				
 		double totalGallons = pc.calculateGallons(paintableSurface, nonPaintableSurface, paint);
 		DecimalFormat df = new DecimalFormat("#.00"); 
@@ -68,9 +78,8 @@ public class PaintCalculator {
 		
 		double totalPrice = pc.calculatePrice(paintableSurface, nonPaintableSurface, paint);
 		NumberFormat nf = NumberFormat.getCurrencyInstance();
-		System.out.println("Cost per coat: " + nf.format(totalPrice));
+		System.out.println("Cost per coat of paint #" + paint.getSku() + ": " + nf.format(totalPrice));
 		
-
 	}
 	
 	public int calculateArea(ArrayList<Surface> surface){
@@ -82,18 +91,18 @@ public class PaintCalculator {
 	}
 
 	public double calculateGallons(double paintableSurfaceArea, double nonPaintableSurfaceArea, Paint p){
-		double gallons = (paintableSurfaceArea - nonPaintableSurfaceArea) / p.coveragePerGallon;
+		double gallons = (paintableSurfaceArea - nonPaintableSurfaceArea) / p.getCoveragePerGallon();
 		return gallons;
 	}	
 	
 	public double calculatePrice(double paintableSurfaceArea, double nonPaintableSurfaceArea, Paint p){
 		double gallons = calculateGallons(paintableSurfaceArea, nonPaintableSurfaceArea, p);
-		double price = gallons * p.pricePerGallon;
+		double price = gallons * p.getPricePerGallon();
 		return price;
 	}
 	
 //	public double calculatePrice(double gallons, Paint p){
-//		double price = gallons * p.pricePerGallon;
+//		double price = gallons * p.getPricePerGallon();
 //		return price;
 //	}	
 

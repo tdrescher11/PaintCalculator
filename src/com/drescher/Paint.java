@@ -10,6 +10,28 @@ public class Paint {
 		this.pricePerGallon = pricePerGallon;
 		this.sku = sku;
 	}
-	
-	
+
+	public int getCoveragePerGallon() {
+		return coveragePerGallon;
+	}
+
+	public void setCoveragePerGallon(int coveragePerGallon) {
+		this.coveragePerGallon = coveragePerGallon;
+	}
+
+	public int getPricePerGallon() {
+		return pricePerGallon;
+	}
+
+	public void setPricePerGallon(int pricePerGallon) {
+		this.pricePerGallon = pricePerGallon;
+	}
+
+	public String getSku() {
+		return sku;
+	}
+
+	public void setSku(String sku) {
+		this.sku = sku;
+	}	
 }
